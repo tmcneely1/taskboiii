@@ -118,6 +118,8 @@ export interface TaskScoreSettings {
 	importantPriorities: string[];
 	/** Priority values treated as Urgent. */
 	urgentPriorities: string[];
+	/** Show the live score as a badge on task cards. */
+	showBadgeOnCards: boolean;
 	/** Write the score tier back to task frontmatter when it changes. */
 	writeBackOnTierChange: boolean;
 	/** Frontmatter property written when writeBackOnTierChange is on. */

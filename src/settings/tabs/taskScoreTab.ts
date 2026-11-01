@@ -70,6 +70,20 @@ export function renderTaskScoreTab(
 		);
 
 		group.addSetting((setting) =>
+			configureToggleSetting(setting, {
+				name: "Show score badge on task cards",
+				desc:
+					"Displays the live score on each card, coloured by tier. Click a badge " +
+					"for the full breakdown.",
+				getValue: () => score().showBadgeOnCards,
+				setValue: (value) => {
+					score().showBadgeOnCards = value;
+					save();
+				},
+			})
+		);
+
+		group.addSetting((setting) =>
 			configureNumberSetting(setting, {
 				name: "Points per opened day",
 				desc:

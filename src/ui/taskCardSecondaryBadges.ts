@@ -14,6 +14,11 @@ import {
 import { removeRelationshipContainer } from "./taskCardRelationshipExpansion";
 import { getBlockedByTaskPaths } from "./taskCardRelationships";
 import { type TaskCardPresentationOptions } from "./taskCardPresentation";
+import {
+	SCORE_BADGE_SELECTOR,
+	renderTaskCardScoreBadge,
+	updateTaskCardScoreBadge,
+} from "./taskCardScoreBadge";
 
 export interface TaskCardSecondaryBadgeOptions {
 	propertyLabels?: TaskCardPresentationOptions["propertyLabels"];
@@ -61,6 +66,7 @@ const SECONDARY_BADGE_SELECTORS = [
 	".task-card__chevron",
 	".task-card__blocking-toggle",
 	".task-card__blocked-toggle",
+	SCORE_BADGE_SELECTOR,
 ];
 
 function getTaskCardBadgeLogger(plugin: TaskNotesPlugin) {
@@ -392,6 +398,7 @@ export function renderTaskCardSecondaryBadges(
 		});
 	}
 
+	renderTaskCardScoreBadge(badgesContainer, task, plugin);
 	renderProjectBadges(options, badgesContainer);
 	renderDependencyToggles(options, badgesContainer);
 }
@@ -569,6 +576,8 @@ export function updateTaskCardSecondaryBadges(
 		removeSecondaryBadges(card);
 		return;
 	}
+
+	updateTaskCardScoreBadge(card, task, plugin);
 
 	updateBadgeIndicator(card, ".task-card__recurring-indicator", {
 		shouldExist: !!task.recurrence,

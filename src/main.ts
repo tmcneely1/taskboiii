@@ -347,11 +347,25 @@ export default class TaskNotesPlugin extends Plugin {
 			// The note already on screen at startup counts as opened today.
 			const active = this.app.workspace.getActiveFile();
 			if (active) this.taskScoreService.recordOpen(active.path);
+			// Build the cache once the vault is indexed, so cards have a score to
+			// render rather than appearing blank on first paint.
+			this.app.workspace.onLayoutReady(() => {
+				void this.taskScoreService.refreshScores();
+			});
 		});
 
 		this.registerEvent(
 			this.app.workspace.on("file-open", (file: TFile | null) => {
-				if (file) this.taskScoreService.recordOpen(file.path);
+				if (!file) return;
+				this.taskScoreService.recordOpen(file.path);
+				this.taskScoreService.scheduleRefresh();
+			})
+		);
+		// Editing a task's dates or priority changes its score, so recompute —
+		// debounced, since this fires on every keystroke-driven cache update.
+		this.registerEvent(
+			this.app.metadataCache.on("changed", () => {
+				this.taskScoreService.scheduleRefresh();
 			})
 		);
 		this.registerEvent(

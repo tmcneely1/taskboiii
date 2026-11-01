@@ -1,0 +1,48 @@
+/* Live task score badge on task cards. Tiers follow the score thresholds:
+   red >= 10, gold >= 5, blue >= 2, grey >= 1. */
+.task-card__score-badge {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.75em;
+	height: 1.35em;
+	padding: 0 0.4em;
+	border-radius: var(--radius-s);
+	font-size: var(--font-ui-smaller);
+	font-weight: var(--font-semibold);
+	font-variant-numeric: tabular-nums;
+	line-height: 1;
+	cursor: pointer;
+	flex: 0 0 auto;
+	background: var(--background-modifier-border);
+	color: var(--text-muted);
+}
+
+.task-card__score-badge:hover {
+	opacity: 0.85;
+}
+
+.task-card__score-badge:focus-visible {
+	outline: 2px solid var(--interactive-accent);
+	outline-offset: 1px;
+}
+
+.task-card__score-badge--red {
+	background: var(--color-red);
+	color: var(--text-on-accent);
+}
+
+.task-card__score-badge--gold {
+	background: var(--color-yellow);
+	color: var(--text-normal);
+}
+
+.task-card__score-badge--blue {
+	background: var(--color-blue);
+	color: var(--text-on-accent);
+}
+
+.task-card__score-badge--gray {
+	background: var(--background-modifier-border);
+	color: var(--text-muted);
+}

@@ -100,6 +100,14 @@ export class TaskScoreService {
 	private loaded = false;
 	private saveTimer: ReturnType<typeof setTimeout> | null = null;
 	private listeners = new Set<() => void>();
+	/**
+	 * Scores by task path, so card rendering — which is synchronous — can read a
+	 * score without re-walking the vault for every card.
+	 */
+	private scoreCache = new Map<string, ScoredTask>();
+	private refreshTimer: ReturnType<typeof setTimeout> | null = null;
+	private refreshing = false;
+	private refreshQueued = false;
 
 	constructor(private plugin: TaskNotesPlugin) {}
 
@@ -330,6 +338,68 @@ export class TaskScoreService {
 				breakdown,
 			};
 		});
+	}
+
+	/**
+	 * Recomputes the score cache. Guarded against overlapping runs: a request
+	 * arriving mid-refresh queues exactly one more pass rather than piling up.
+	 */
+	async refreshScores(): Promise<void> {
+		if (!this.settings.enabled) {
+			if (this.scoreCache.size > 0) {
+				this.scoreCache.clear();
+				this.notify();
+			}
+			return;
+		}
+		if (this.refreshing) {
+			this.refreshQueued = true;
+			return;
+		}
+
+		this.refreshing = true;
+		try {
+			const scored = await this.scoreAll();
+			this.scoreCache = new Map(scored.map((item) => [item.task.path, item]));
+			this.notify();
+		} catch (error) {
+			console.error("Task Score: could not refresh scores", error);
+		} finally {
+			this.refreshing = false;
+			if (this.refreshQueued) {
+				this.refreshQueued = false;
+				void this.refreshScores();
+			}
+		}
+	}
+
+	/** Debounced refresh, for the chatty events that invalidate scores. */
+	scheduleRefresh(delayMs = 3000): void {
+		if (this.refreshTimer) clearTimeout(this.refreshTimer);
+		this.refreshTimer = setTimeout(() => {
+			this.refreshTimer = null;
+			void this.refreshScores();
+		}, delayMs);
+	}
+
+	/**
+	 * Cached score for a task, or a synchronous fallback computed from the task
+	 * alone. The fallback omits the blocking term, which needs the whole graph;
+	 * it covers the window before the first refresh completes.
+	 */
+	getCachedScore(task: TaskInfo): ScoredTask | null {
+		if (!this.settings.enabled) return null;
+		const cached = this.scoreCache.get(task.path);
+		if (cached) return cached;
+		if (!this.loaded) return null;
+
+		const breakdown = this.ownBreakdown(task, todayISO());
+		return {
+			task,
+			score: breakdown.total,
+			tier: tierFor(breakdown.total),
+			breakdown,
+		};
 	}
 
 	/** Scores every known task, highest first. */

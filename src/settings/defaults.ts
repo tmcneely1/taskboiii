@@ -432,6 +432,7 @@ export const DEFAULT_SETTINGS: TaskNotesSettings = {
 		attentionWindowDays: 180,
 		importantPriorities: ["high"],
 		urgentPriorities: ["urgent"],
+		showBadgeOnCards: true,
 		writeBackOnTierChange: false,
 		writeBackProperty: "taskScoreTier",
 	},
