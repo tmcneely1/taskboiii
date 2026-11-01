@@ -262,7 +262,10 @@ export function renderTaskScoreTab(
 			group.addSetting((setting) =>
 				configureTextSetting(setting, {
 					name: "Property name",
-					desc: "The frontmatter property the tier is written to.",
+					desc:
+						"The frontmatter property the tier is written to. A companion " +
+						"numeric property with the suffix \"Rank\" is written alongside it, " +
+						"since sorting on the tier name itself would be alphabetical.",
 					placeholder: "taskScoreTier",
 					getValue: () => score().writeBackProperty,
 					setValue: (value) => {

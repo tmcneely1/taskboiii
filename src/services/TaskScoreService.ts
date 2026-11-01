@@ -42,6 +42,22 @@ interface AttentionData {
 
 const STORE_FILE = "task-score.json";
 
+/** Sortable rank for a tier. Alphabetical tier names sort meaninglessly. */
+export function rankFor(tier: ScoreTier): number {
+	switch (tier) {
+		case "red":
+			return 4;
+		case "gold":
+			return 3;
+		case "blue":
+			return 2;
+		case "gray":
+			return 1;
+		default:
+			return 0;
+	}
+}
+
 export function tierFor(score: number): ScoreTier {
 	for (const { tier, min } of TIER_THRESHOLDS) {
 		if (score >= min) return tier;
@@ -347,6 +363,9 @@ export class TaskScoreService {
 					file,
 					(frontmatter: Record<string, unknown>) => {
 						frontmatter[property] = item.tier;
+						// Both are written together and only on a tier change, so the
+						// rank stays exact while the churn stays bounded.
+						frontmatter[`${property}Rank`] = rankFor(item.tier);
 					}
 				);
 				this.data.tiers[item.task.path] = item.tier;
