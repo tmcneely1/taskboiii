@@ -164,6 +164,7 @@ export default class TaskNotesPlugin extends Plugin {
 	projectSubtasksService: ProjectSubtasksService;
 	expandedProjectsService: ExpandedProjectsService;
 	autoArchiveService: AutoArchiveService;
+	taskScoreService: import("./services/TaskScoreService").TaskScoreService;
 	viewPerformanceService: ViewPerformanceService;
 
 	// Task selection service for batch operations
@@ -320,6 +321,8 @@ export default class TaskNotesPlugin extends Plugin {
 		// and initializeAfterLayoutReady attempts registration again.
 		void registerBasesIntegration(this);
 
+		this.registerTaskScoreTracking();
+
 		// Defer expensive initialization until layout is ready
 		this.app.workspace.onLayoutReady(() => {
 			void this.initializeAfterLayoutReady();
@@ -330,6 +333,37 @@ export default class TaskNotesPlugin extends Plugin {
 		this.emitter.trigger(TASKNOTES_RUNTIME_LIFECYCLE_RAW_EVENTS.ready, {
 			timestamp: new Date().toISOString(),
 		});
+	}
+
+	/**
+	 * Wires up attention tracking for Task Score.
+	 *
+	 * The day log is the one piece of state the plugin cannot reconstruct, so
+	 * every path that changes a note's identity has to keep it in step.
+	 */
+	private registerTaskScoreTracking(): void {
+		void this.taskScoreService.load().then(() => {
+			this.taskScoreService.prune();
+			// The note already on screen at startup counts as opened today.
+			const active = this.app.workspace.getActiveFile();
+			if (active) this.taskScoreService.recordOpen(active.path);
+		});
+
+		this.registerEvent(
+			this.app.workspace.on("file-open", (file: TFile | null) => {
+				if (file) this.taskScoreService.recordOpen(file.path);
+			})
+		);
+		this.registerEvent(
+			this.app.vault.on("rename", (file: TAbstractFile, oldPath: string) => {
+				this.taskScoreService.handleRename(oldPath, file.path);
+			})
+		);
+		this.registerEvent(
+			this.app.vault.on("delete", (file: TAbstractFile) => {
+				this.taskScoreService.handleDelete(file.path);
+			})
+		);
 	}
 
 	private registerTaskNotesFileMenuActions(): void {

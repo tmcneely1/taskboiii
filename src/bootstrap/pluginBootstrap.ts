@@ -22,6 +22,7 @@ import { ViewStateManager } from "../services/ViewStateManager";
 import { ProjectSubtasksService } from "../services/ProjectSubtasksService";
 import { ExpandedProjectsService } from "../services/ExpandedProjectsService";
 import { AutoArchiveService } from "../services/AutoArchiveService";
+import { TaskScoreService } from "../services/TaskScoreService";
 import { DragDropManager } from "../utils/DragDropManager";
 import { StatusBarService } from "../ui/StatusBarService";
 import { NotificationService } from "../ui/NotificationService";
@@ -158,6 +159,7 @@ export async function initializeCoreServices(plugin: TaskNotesPlugin): Promise<v
 	plugin.projectSubtasksService = new ProjectSubtasksService(plugin);
 	plugin.expandedProjectsService = new ExpandedProjectsService(plugin);
 	plugin.autoArchiveService = new AutoArchiveService(plugin);
+	plugin.taskScoreService = new TaskScoreService(plugin);
 
 	const { TaskSelectionService } = await import("../services/TaskSelectionService");
 	plugin.taskSelectionService = new TaskSelectionService(plugin);

@@ -419,4 +419,20 @@ export const DEFAULT_SETTINGS: TaskNotesSettings = {
 	googleCalendarExport: DEFAULT_GOOGLE_CALENDAR_EXPORT,
 	// Debug logging
 	enableDebugLogging: false,
+	taskScore: {
+		enabled: true,
+		baseDailyRate: 0.2,
+		importantMultiplier: 3,
+		urgentMultiplier: 5,
+		dueTodayBonus: 10,
+		deadlineBonus: 10,
+		quickWinMinutes: 15,
+		maxDurationBonus: 2,
+		blockingTransfer: 0.5,
+		attentionWindowDays: 180,
+		importantPriorities: ["high"],
+		urgentPriorities: ["urgent"],
+		writeBackOnTierChange: false,
+		writeBackProperty: "taskScoreTier",
+	},
 };

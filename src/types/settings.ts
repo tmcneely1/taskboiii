@@ -91,6 +91,39 @@ export interface ProjectAutosuggestSettings {
 	propertyValue?: string; // Expected value for the property (empty = property must exist)
 }
 
+
+/** Weights for the attention-weighted task score. */
+export interface TaskScoreSettings {
+	/** Master switch; when off the service does no work and the UI is hidden. */
+	enabled: boolean;
+	/** Points a plain task accrues per day its note is opened. */
+	baseDailyRate: number;
+	/** Multiplier while the task is high priority. */
+	importantMultiplier: number;
+	/** Multiplier while the task is urgent. */
+	urgentMultiplier: number;
+	/** Flat bonus once the scheduled date has arrived. */
+	dueTodayBonus: number;
+	/** Flat bonus on and after the due date. */
+	deadlineBonus: number;
+	/** A timeEstimate at or below this many minutes earns the full quick-win bonus. */
+	quickWinMinutes: number;
+	/** Largest bonus a short time estimate can contribute. */
+	maxDurationBonus: number;
+	/** Share of a blocked task's score that flows to whatever blocks it. */
+	blockingTransfer: number;
+	/** Attention entries older than this many days are dropped. */
+	attentionWindowDays: number;
+	/** Priority values treated as Important. */
+	importantPriorities: string[];
+	/** Priority values treated as Urgent. */
+	urgentPriorities: string[];
+	/** Write the score tier back to task frontmatter when it changes. */
+	writeBackOnTierChange: boolean;
+	/** Frontmatter property written when writeBackOnTierChange is on. */
+	writeBackProperty: string;
+}
+
 export interface TaskNotesSettings {
 	tasksFolder: string; // Now just a default location for new tasks
 	moveArchivedTasks: boolean; // Whether to move tasks to archive folder when archived
@@ -260,6 +293,9 @@ export interface TaskNotesSettings {
 	googleCalendarExport: GoogleCalendarExportSettings;
 	// Debug logging
 	enableDebugLogging: boolean;
+
+	/** Attention-weighted task score. */
+	taskScore: TaskScoreSettings;
 }
 
 export interface DefaultReminder {

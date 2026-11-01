@@ -400,5 +400,37 @@ export function createTaskNotesCommandDefinitions(
 				await ctx.rolloverOverdueScheduledTasks();
 			},
 		},
+		{
+			id: "task-score-explain-top",
+			nameKey: "commands.taskScoreExplainTop",
+			callback: async () => {
+				const scored = await plugin.taskScoreService.scoreAll();
+				const top = scored[0];
+				if (!top) {
+					new Notice("Task Score: no tasks indexed yet.");
+					return;
+				}
+				new Notice(plugin.taskScoreService.explain(top), 12000);
+			},
+		},
+		{
+			id: "task-score-sync-tiers",
+			nameKey: "commands.taskScoreSyncTiers",
+			callback: async () => {
+				if (!plugin.settings.taskScore.writeBackOnTierChange) {
+					new Notice(
+						"Task Score: enable \"Write tier to frontmatter\" in settings first."
+					);
+					return;
+				}
+				const scored = await plugin.taskScoreService.scoreAll();
+				const written = await plugin.taskScoreService.syncTiers(scored);
+				new Notice(
+					written === 0
+						? "Task Score: every tier is already up to date."
+						: `Task Score: updated ${written} task${written === 1 ? "" : "s"}.`
+				);
+			},
+		},
 	];
 }

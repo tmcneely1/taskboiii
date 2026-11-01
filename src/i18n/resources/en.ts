@@ -537,6 +537,7 @@ export const en: TranslationTree = {
 			appearance: "Appearance & UI",
 			features: "Features",
 			integrations: "Integrations",
+			taskScore: "Task score",
 		},
 		modalFields: {
 			header: "Task modal fields configuration",
@@ -2498,6 +2499,8 @@ export const en: TranslationTree = {
 		statsLoadingFailed: "Error loading project details.",
 	},
 	commands: {
+		taskScoreExplainTop: "Task score: explain the top-scoring task",
+		taskScoreSyncTiers: "Task score: write tiers to frontmatter",
 		openCalendarView: "Open mini calendar view",
 		openAdvancedCalendarView: "Open calendar view",
 		openTasksView: "Open tasks view",
