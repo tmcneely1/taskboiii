@@ -142,3 +142,36 @@ Calendar components by [FullCalendar.io](https://fullcalendar.io/).
 ## License
 
 MIT—see [LICENSE](LICENSE).
+
+---
+
+## About this fork
+
+**Taskboiii** is a fork of [TaskNotes](https://github.com/callumalpass/tasknotes) by
+Callum Alpass, taken from the **4.14.0** release. TaskNotes is MIT licensed; that licence
+and its copyright notice are retained in [LICENSE](LICENSE), with a second line covering
+modifications made here.
+
+Why 4.14.0 rather than `main`: upstream is mid-migration to 5.0, which rebuilds the views
+on Obsidian Bases. 4.14.0 is the last stable release with bespoke view components, which
+are more directly rewritable. The tradeoff is accepted deliberately — upstream is moving
+away from this architecture, so this is closer to a hard fork than a tracking fork.
+
+Upstream's `main` at the time of forking is preserved on the `upstream-main` branch, and
+`upstream` is configured as a git remote for diffing.
+
+### Divergence so far
+
+- Plugin identity only: `id` is `taskboiii`, name **Taskboiii**. Internal identifiers
+  (view types such as `tasknotes-task-list-view`, and the `tasknotes-` CSS class prefix)
+  are deliberately unchanged — there are ~3,900 references across ~250 files, and renaming
+  them buys nothing functionally. **Note:** because those identifiers are shared, this
+  plugin and upstream TaskNotes should not be enabled in the same vault at once.
+
+### Planned
+
+- Attention-weighted **task score**, ported from
+  [`obsidian-task-score`](https://github.com/tmcneely1) — scoring that accrues on the days
+  a task's note is actually opened, rather than from metadata alone. Upstream's
+  `urgencyScore` is `priorityWeight + max(0, 10 - daysUntilDue)`, with no attention term.
+- UI rework.
